@@ -1,7 +1,10 @@
-import { combineReducers } from 'redux';
+import { createStore, combineReducers } from 'redux';
+import { reducer as reduxFormReducer } from 'redux-form';
+import fetchFormData from './fetch_form_data';
 
 const rootReducer = combineReducers({
-  state: (state = {}) => state
+  form: reduxFormReducer,
+  formData: fetchFormData
 });
 
 export default rootReducer;
