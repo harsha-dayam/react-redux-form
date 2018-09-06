@@ -58,13 +58,14 @@ class Form extends Component {
 		);
 	}
 
-	onSubmit(submittedFormData) {
+	submitMyForm(submittedFormData) {
 		this.props.postFormData(submittedFormData);
+		this.props.resetForm();
 		console.log("Form Submitted with following data:", submittedFormData);
 	}
 
 	render() {
-		const { handleSubmit, pristine, reset, submitting, form, formData:{dropDownData}} = this.props;
+		const { handleSubmit, submitMyForm, pristine, reset, submitting, form, formData:{dropDownData}} = this.props;
 		if(_.isEmpty(dropDownData)) {
 			return null;
 		}
@@ -72,7 +73,7 @@ class Form extends Component {
 		return (
 			<div>
 				<h1>Form</h1>
-				<form onSubmit={ handleSubmit(this.onSubmit.bind(this)) }>
+				<form onSubmit={ handleSubmit(this.submitMyForm.bind(this)) }>
 	        <Field
 						label="First Name"
 	          name="firstName"
