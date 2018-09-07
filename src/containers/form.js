@@ -56,7 +56,7 @@ class Form extends Component {
 		const {input, label, type, onChange, meta: { touched, error, warning, invalid }} = field;
 		return (
 		  <div className="form-group">
-		    <label>{label}:</label>
+		    <label>{label}</label>
 		    <span>
 		      <input className={`form-control ${touched && invalid ? 'is-invalid' : ''}`} {...input} onBlur={onChange} placeholder={label} type={type} />
 		      {touched &&
@@ -91,7 +91,7 @@ class Form extends Component {
 				<h1>Form</h1>
 				<form className="was-validated" onSubmit={ handleSubmit(this.submitMyForm.bind(this)) }>
 	        <Field
-						label="First Name"
+						label="First Name*"
 	          name="firstName"
 	          component={this.renderField}
 	          type="text"
@@ -124,7 +124,7 @@ class Form extends Component {
 		          />
 						}
 	          <Field
-							label="Last Name"
+							label="Last Name*"
 	            name="lastName"
 	            component={this.renderField}
 	            type="text"
@@ -133,7 +133,7 @@ class Form extends Component {
 							onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 	          />
 			      <Field
-							label="Email"
+							label="Email*"
 			        name="email"
 			        component={this.renderField}
 			        type="email"
@@ -142,11 +142,11 @@ class Form extends Component {
 							onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 			      />
 			      <Field
-							label="Phone"
+							label="Phone*"
 			        name="phone"
 			        component={this.renderField}
 			        type="number"
-			        placeholder="Phone Number"
+			        placeholder="Phone Number *"
 							validate={[this.required, this.phone]}
 							onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 			      />

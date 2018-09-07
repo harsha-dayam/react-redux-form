@@ -6,9 +6,9 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Form />
-        <hr />
         <SearchField />
+        <hr />
+        <Form />        
       </div>
     );
   }

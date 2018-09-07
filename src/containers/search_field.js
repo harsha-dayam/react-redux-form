@@ -32,7 +32,7 @@ class Form extends Component {
                   onChange={this.onChange.bind(this)}
                   onBlur={() => props.input.onBlur(props.input.value)}
                   options={dropDownData}
-                  placeholder="Get information of the country of your choice"
+                  placeholder="Search or select the country of your choice"
                   isSearchable = {true}
                 />
               }

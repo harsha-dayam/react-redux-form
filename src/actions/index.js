@@ -26,7 +26,6 @@ export function postFormData(props) {
 }
 
 export function fetchCountryInfo(props) {
-	console.log(props);
 	const request = axios.get(`https://restcountries.eu/rest/v2/name/${props}?fullText=true`);
 
 	return {
