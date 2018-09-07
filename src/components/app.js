@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import Form from '../containers/form';
+import SearchField from '../containers/search_field';
 
 export default class App extends Component {
   render() {
     return (
-      <Form />
+      <div>
+        <Form />
+        <hr />
+        <SearchField />
+      </div>
     );
   }
 }

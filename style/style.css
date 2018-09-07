@@ -1,4 +1,48 @@
-.error {
-  color: red;
-  margin-left: 5px;
+.button-group {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.container .rw-widget>.rw-widget-container {
+  margin-bottom: 10px;
+}
+
+.container h1 {
+  margin: 10px 0;
+  text-align: center;
+  font-family: "Verdana", Geneva, sans-serif;
+}
+
+.container h3 {
+  margin-bottom: 10px;
+  text-align: center;
+  font-family: "Verdana", Geneva, sans-serif;
+}
+
+li.list-group-item {
+  text-align: center
+}
+
+span.alert {
+  padding: 5px
+}
+
+input.form-control {
+  margin-bottom: 8px;
+}
+
+label.form-check-input {
+  margin-right: 5px;
+}
+
+label.form-check-label {
+  margin-bottom: 10px;
+}
+
+input[name="sex"] {
+  margin-right: 5px;
+}
+
+button[type="submit"] {
+  margin-right: 5px;
 }

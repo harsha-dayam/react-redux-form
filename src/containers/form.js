@@ -1,7 +1,9 @@
 import React, { Component} from 'react';
-import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
+import { Field, reduxForm } from 'redux-form';
 import Select from 'react-select';
+import Multiselect from 'react-widgets/lib/Multiselect';
+// import 'react-widgets/dist/css/react-widgets.css';
 import _ from 'lodash';
 
 import { fetchDropDownData, postFormData } from '../actions/index';
@@ -10,12 +12,14 @@ class Form extends Component {
 	constructor() {
     super();
 
+		// to show middle name input field
     this.state = {
 			checked: false
 	  };
   }
 
 	componentWillMount() {
+		// Data for multi select searchable dropdown
 		this.props.fetchDropDownData();
 	}
 
@@ -25,8 +29,9 @@ class Form extends Component {
     })
   }
 
+	// Field Validation
 	required(value) {
-		return !value ? "Required" : undefined;
+		return !value ? "! Required" : undefined;
 	}
 
 	email(value) {
@@ -37,35 +42,46 @@ class Form extends Component {
 		return value && !/^(0|[1-9][0-9]{9})$/i.test(value) ? 'Invalid Phone Number' : undefined;
 	}
 
-	onInputBlur(event) {
-		this.props.postFormData(event.target.defaultValue);
-
-			console.log("Field data posted on blur. Value:", event.target.defaultValue);
+	onInputChange(event) {
+		this.props.postFormData({data: event.target.defaultValue})
+		.then((response) => {
+			console.log("The following data was posted to the server:", response.payload.data);
+		}).catch(() => {
+		    console.log('There was an error in submitting your data');
+		});
 	}
 
+	// Custom component for redux-form
 	renderField(field) {
-		const {input, label, type, onChange, meta: { touched, error, warning }} = field;
+		const {input, label, type, onChange, meta: { touched, error, warning, invalid }} = field;
 		return (
-		  <div>
-		    <label>{label}:&nbsp;</label>
+		  <div className="form-group">
+		    <label>{label}:</label>
 		    <span>
-		      <input {...input} onBlur={onChange} placeholder={label} type={type} />
+		      <input className={`form-control ${touched && invalid ? 'is-invalid' : ''}`} {...input} onBlur={onChange} placeholder={label} type={type} />
 		      {touched &&
-		        ((error && <span className="error">{error}</span>) ||
-		          (warning && <span>{warning}</span>))}
+		        ((error && <span className="alert alert-danger">{error}</span>) ||
+		          (warning && <span className="alert alert-warning">{warning}</span>))}
 		    </span>
 		  </div>
 		);
 	}
 
+	// On Form Submit
 	submitMyForm(submittedFormData) {
-		this.props.postFormData(submittedFormData);
-		this.props.resetForm();
-		console.log("Form Submitted with following data:", submittedFormData);
+		// Resolving the promise axios generates to post response data or do
+		// any other action if need be after submitting form data.
+		this.props.postFormData(submittedFormData)
+		.then((response) => {
+			console.log("The following data was posted to the server:", response.payload.data);
+		}).catch(() => {
+		    console.log('There was an error in submitting your data');
+		});
 	}
 
 	render() {
 		const { handleSubmit, submitMyForm, pristine, reset, submitting, form, formData:{dropDownData}} = this.props;
+		// render only when dropdown data is available
 		if(_.isEmpty(dropDownData)) {
 			return null;
 		}
@@ -73,20 +89,20 @@ class Form extends Component {
 		return (
 			<div>
 				<h1>Form</h1>
-				<form onSubmit={ handleSubmit(this.submitMyForm.bind(this)) }>
+				<form className="was-validated" onSubmit={ handleSubmit(this.submitMyForm.bind(this)) }>
 	        <Field
 						label="First Name"
 	          name="firstName"
 	          component={this.renderField}
 	          type="text"
 	          placeholder="First Name"
-						onChange={_.debounce(this.onInputBlur.bind(this), 1000)}
+						onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 						validate={this.required}
 	        />
 					{ !this.state.checked &&
 						<div>
-			        <label htmlFor="middleNameCheck">Click to enter Middle Name:&nbsp;</label>
-			        <span>
+			        <label className="form-check-label" htmlFor="middleNameCheck">Click to enter Middle Name :&nbsp;</label>
+			        <span className="form-check-input">
 			          <Field
 			            name="middleNameCheck"
 			            id="middleNameCheck"
@@ -104,7 +120,7 @@ class Form extends Component {
 		            component={this.renderField}
 		            type="text"
 		            placeholder="Middle Name"
-								onChange={_.debounce(this.onInputBlur.bind(this), 1000)}
+								onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 		          />
 						}
 	          <Field
@@ -114,7 +130,7 @@ class Form extends Component {
 	            type="text"
 	            placeholder="Last Name"
 							validate={this.required}
-							onChange={_.debounce(this.onInputBlur.bind(this), 1000)}
+							onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 	          />
 			      <Field
 							label="Email"
@@ -123,7 +139,7 @@ class Form extends Component {
 			        type="email"
 			        placeholder="Email"
 							validate={[this.required, this.email]}
-							onChange={_.debounce(this.onInputBlur.bind(this), 1000)}
+							onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 			      />
 			      <Field
 							label="Phone"
@@ -132,44 +148,46 @@ class Form extends Component {
 			        type="number"
 			        placeholder="Phone Number"
 							validate={[this.required, this.phone]}
-							onChange={_.debounce(this.onInputBlur.bind(this), 1000)}
+							onChange={_.debounce(this.onInputChange.bind(this), 1000)}
 			      />
-			      <div>
+			      <div className="form-check">
 			        <label>Sex:&nbsp;</label>
 			        <span>
-			          <label>
-			            <Field
-										label="Male"
-			              name="sex"
-			              component={this.renderField}
-			              type="radio"
-			              value="male"
-			            />
-			          </label>&nbsp;
-			          <label>
-			            <Field
-										label="Female"
-			              name="sex"
-			              component={this.renderField}
-			              type="radio"
-			              value="female"
-			            />
-			          </label>
+			          <label className="form-check-input"> Male</label>
+		            <Field
+									className="form-check-input"
+		              name="sex"
+		              component="input"
+		              type="radio"
+		              value="male"
+									onChange={_.debounce(this.onInputChange.bind(this), 1000)}
+		            />
+			          <label className="form-check-input"> Female</label>
+		            <Field
+									className="form-check-input"
+									label="Female"
+		              name="sex"
+		              component="input"
+		              type="radio"
+		              value="female"
+									onChange={_.debounce(this.onInputChange.bind(this), 1000)}
+		            />
 			        </span>
 			      </div>
 			      <div>
-			        <label>Favorite Color:&nbsp;</label>
-			        <span>
-			          <Field name="favoriteColor" component="select">
-			            <option />
-			            <option value="ff0000">Red</option>
-			            <option value="00ff00">Green</option>
-			            <option value="0000ff">Blue</option>
-			          </Field>
-			        </span>
-			      </div>
-						<div>
-							<Field name="name"
+							<label>Hobbies</label>
+			        <Field
+			          name="hobbies"
+								placeholder="Multiselect Dropdown"
+			          component={Multiselect}
+			          defaultValue={[]}
+			          onBlur={() => props.onBlur()}
+			          data={[ 'Cycling', 'Hiking', 'Music' ]}/>
+				      </div>
+						<div className="form-group">
+							<label>Country</label>
+							<Field
+								name="country"
 								component={props =>
 										<Select
 											value={props.input.value}
@@ -177,8 +195,7 @@ class Form extends Component {
 											onBlur={() => props.input.onBlur(props.input.value)}
 											options={dropDownData}
 											placeholder="This dropdown is searchable (searchable when values > 10)"
-											isMulti = { dropDownData.length > 10 }
-											isSearchable = {true}
+											isSearchable = {dropDownData.length > 10}
 										/>
 									}
 								/>
@@ -186,14 +203,14 @@ class Form extends Component {
 			      <div>
 			        <label>Notes</label>
 			        <div>
-			          <Field name="notes" component="textarea" />
+			          <Field name="notes" component="textarea" className="form-control" onChange={_.debounce(this.onInputChange.bind(this), 1000)}/>
 			        </div>
 			      </div>
-			      <div>
-			        <button type="submit" disabled={pristine || submitting}>
+			      <div className="button-group">
+			        <button type="submit" className="btn btn-success" disabled={pristine || submitting}>
 			          Submit
 			        </button>
-			        <button type="button" disabled={pristine || submitting} onClick={reset}>
+			        <button type="button" className="btn btn-primary" disabled={pristine || submitting} onClick={reset}>
 			          Clear Values
 			        </button>
 			      </div>
